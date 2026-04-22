@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { CATEGORIES, CategoryId, Expense, todayISO } from "@/lib/expenses";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
+import { Plus, Sparkles } from "lucide-react";
 
 type Props = {
   onAdd: (expense: Expense) => void;
@@ -34,26 +32,30 @@ export const AddExpenseForm = ({ onAdd }: Props) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-3xl bg-card shadow-card border border-border p-6 md:p-8"
+      className="glass rounded-3xl p-6 md:p-7 relative overflow-hidden"
     >
-      <div className="flex items-baseline justify-between mb-6">
-        <h2 className="font-display text-2xl md:text-3xl font-semibold">
-          New expense
-        </h2>
-        <span className="text-xs uppercase tracking-widest text-muted-foreground">
+      {/* subtle top highlight */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-xl bg-gradient-primary flex items-center justify-center glow-primary">
+            <Sparkles className="w-4 h-4 text-primary-foreground" />
+          </div>
+          <h2 className="font-display text-xl font-semibold">New expense</h2>
+        </div>
+        <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono">
           Quick add
         </span>
       </div>
 
       <div className="space-y-5">
         <div>
-          <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+          <label className="block text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono mb-2">
             Amount
           </label>
-          <div className="flex items-center gap-2 border-b-2 border-foreground/10 focus-within:border-foreground transition-colors pb-2">
-            <span className="font-display text-4xl md:text-5xl text-muted-foreground">
-              $
-            </span>
+          <div className="flex items-center gap-2 rounded-2xl bg-secondary/40 border border-border/60 focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/30 transition-all px-4 py-3">
+            <span className="font-display text-3xl text-primary/70">$</span>
             <input
               type="number"
               inputMode="decimal"
@@ -62,17 +64,17 @@ export const AddExpenseForm = ({ onAdd }: Props) => {
               placeholder="0.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="num font-display text-4xl md:text-5xl bg-transparent outline-none w-full placeholder:text-muted-foreground/40"
+              className="num font-display text-3xl bg-transparent outline-none w-full placeholder:text-muted-foreground/40 text-foreground"
               required
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-3">
+          <label className="block text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono mb-2.5">
             Category
           </label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {CATEGORIES.map((c) => {
               const active = category === c.id;
               return (
@@ -81,13 +83,21 @@ export const AddExpenseForm = ({ onAdd }: Props) => {
                   type="button"
                   onClick={() => setCategory(c.id)}
                   className={cn(
-                    "px-3 py-2 rounded-full text-sm font-medium border transition-all",
+                    "px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
                     active
-                      ? "bg-primary text-primary-foreground border-primary scale-105"
-                      : "bg-background border-border hover:border-foreground/40"
+                      ? "border-transparent text-primary-foreground scale-105"
+                      : "bg-secondary/40 border-border/60 text-foreground/80 hover:border-primary/40"
                   )}
+                  style={
+                    active
+                      ? {
+                          backgroundColor: `hsl(var(${c.colorVar}))`,
+                          boxShadow: `0 0 20px hsl(var(${c.colorVar}) / 0.5)`,
+                        }
+                      : undefined
+                  }
                 >
-                  <span className="mr-1.5">{c.emoji}</span>
+                  <span className="mr-1">{c.emoji}</span>
                   {c.label}
                 </button>
               );
@@ -95,38 +105,39 @@ export const AddExpenseForm = ({ onAdd }: Props) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+            <label className="block text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono mb-2">
               Note
             </label>
-            <Input
+            <input
+              type="text"
               placeholder="Coffee with Sam"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="rounded-xl bg-background border-border h-11"
+              className="input-glass w-full h-11 px-3 text-sm"
             />
           </div>
           <div>
-            <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+            <label className="block text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-mono mb-2">
               Date
             </label>
-            <Input
+            <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="rounded-xl bg-background border-border h-11"
+              className="input-glass w-full h-11 px-3 text-sm [color-scheme:dark]"
             />
           </div>
         </div>
 
-        <Button
+        <button
           type="submit"
-          className="w-full h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base"
+          className="w-full h-12 rounded-2xl bg-gradient-primary text-primary-foreground font-semibold text-sm tracking-wide hover:opacity-90 transition-all glow-primary flex items-center justify-center gap-2 group"
         >
-          <Plus className="w-5 h-5 mr-1" />
+          <Plus className="w-4 h-4 transition-transform group-hover:rotate-90" />
           Add expense
-        </Button>
+        </button>
       </div>
     </form>
   );
